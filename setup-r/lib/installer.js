@@ -311,11 +311,11 @@ function acquireRUbuntu(version) {
             }));
             // install gdbi-core and also qpdf, which is used by `--as-cran`
             yield core.group('Installing R system requirements', () => __awaiter(this, void 0, void 0, function* () {
-                yield exec.exec("sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq gdebi-core qpdf devscripts ghostscript");
+                yield exec.exec("sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q gdebi-core qpdf devscripts ghostscript");
             }));
             yield core.group("Installing R", () => __awaiter(this, void 0, void 0, function* () {
                 yield exec.exec("sudo gdebi", [
-                    "--non-interactive --quiet",
+                    "--non-interactive", "--quiet",
                     path.join(tempDirectory, fileName)
                 ]);
             }));
