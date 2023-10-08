@@ -293,7 +293,7 @@ async function acquireRUbuntu(version: IRVersion): Promise<string> {
     // install gdbi-core and also qpdf, which is used by `--as-cran`
     await core.group('Installing R system requirements', async() => {
       await exec.exec(
-        "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gdebi-core qpdf devscripts ghostscript"
+        "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q gdebi-core qpdf devscripts ghostscript"
       );
     });
     await core.group("Installing R", async() => {
