@@ -140,7 +140,7 @@ runs:
         working-directory: ${{ inputs.working-directory }}
 
       - name: Save R package cache
-        if: ${{ (inputs.cache == 'true') && !steps.restore.outputs.cache-hit }}
+        if: inputs.cache == 'true' && steps.restore.outputs.cache-hit == 'false'
         uses: actions/cache/save@v3
         with:
           path: |
