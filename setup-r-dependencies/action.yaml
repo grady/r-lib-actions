@@ -29,6 +29,10 @@ inputs:
   upgrade:
     description: 'Whether to install the latest available versions of the dependencies. Must be an R expression. See the README for details if you need quoting.'
     default: 'FALSE'
+outputs:
+  cache-key:
+    description: "Package cache key"
+    value: ${{ inputs.cache && steps.restore.outputs.cache-primary-key || null }}
 runs:
   using: "composite"
   steps:
@@ -113,11 +117,11 @@ runs:
 
       - name: Restore R package cache
         if: inputs.cache == 'true'
-        uses: actions/cache@v3
+        id: restore
+        uses: actions/cache/restore@v3
         with:
           path: |
             ${{ env.R_LIBS_USER }}/*
-            !${{ env.R_LIBS_USER }}/pak
           key: ${{ format('{0}-{1}-{2}-{3}', steps.install.outputs.os-version, steps.install.outputs.r-version, inputs.cache-version, hashFiles(format('{0}/.github/pkg.lock', inputs.working-directory ))) }}
           restore-keys: ${{ steps.install.outputs.os-version }}-${{ steps.install.outputs.r-version }}-${{inputs.cache-version }}-
 
@@ -133,6 +137,15 @@ runs:
           cat("::endgroup::\n")
         shell: Rscript {0}
         working-directory: ${{ inputs.working-directory }}
+
+      - name: Save R package cache
+        if: inputs.cache == 'true'
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            ${{ env.R_LIBS_USER }}/*
+            !${{ env.R_LIBS_USER }}/pak
+          key: ${{ steps.restore.outputs.cache-primary-key }}
 
       - name: Session info
         run: |
